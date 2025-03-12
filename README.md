@@ -1,4 +1,11 @@
 src/
+├── components/
+│   ├── MovieCard.tsx
+│   ├── SearchBar.tsx
+│   └── FilterPanel.tsx
+├── components/features/
+│   └── movies/
+│       └── MoviesList.tsx
 ├── features/
 │   ├── movieSearch/
 │   │   ├── api.ts
@@ -10,13 +17,11 @@ src/
 │   │   └── selectors.ts
 │   └── shared/
 │       └── types.ts
-├── components/
-│   ├── MovieCard.tsx
-│   ├── SearchBar.tsx
-│   └── FilterPanel.tsx
+├── hooks/
+│   └── useAppDispatch.ts
 ├── pages/
 │   ├── Home.tsx
 │   ├── MovieDetails.tsx
 │   └── NotFound.tsx
 └── store/
-    └── store.ts
+└── store.ts

@@ -1,31 +1,46 @@
 import React, { useEffect } from 'react';
-/*import { useAppDispatch } from 'hooks/useAppDispatch.ts';
-import { MoviesList } from 'components/features/movies/MoviesList';
-import { fetchPopularMovies, fetchTopRatedMovies } from 'store/slices/moviesSlice';*/
-/*import './HomePage.css';*/
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { MoviesList } from '../../components/movies/MoviesList';
+import { fetchPopularMovies, fetchTopRatedMovies } from '../../store/slices/movieSlice';
+import { Layout, Card, Typography } from 'antd';
+
+const { Header, Content } = Layout;
+const { Title, Text } = Typography;
 
 export const Home: React.FC = () => {
-  /*  const dispatch = useAppDispatch();*/
+    const dispatch = useAppDispatch();
 
-/*    useEffect(() => {
-    /!*    dispatch(fetchPopularMovies());
-        dispatch(fetchTopRatedMovies());*!/
-    }, [dispatch]);*/
+    useEffect(() => {
+        dispatch(fetchPopularMovies());
+        dispatch(fetchTopRatedMovies());
+    }, [dispatch]);
 
     return (
-        <div className="home-page">
-            <section className="hero">
+        <Layout className="home-page">
+            <Header className="hero">
                 <div className="hero__content">
-                    <h1>Discover Movies & TV Shows</h1>
-                    <p>Find and track your favorite entertainment from around the world</p>
+                    <Title level={1}>Discover Movies & TV Shows</Title>
+                    <Text className="hero__description">
+                        Find and track your favorite entertainment from around the world
+                    </Text>
                 </div>
-            </section>
+            </Header>
 
-            <div className="content-section">
-      {/*          <MoviesList category="popular" title="Popular Movies" />
-                <MoviesList category="top_rated" title="Top Rated Movies" />*/}
-            </div>
-        </div>
+            <Content className="content-section">
+                <Card className="movies-list-card">
+                    <MoviesList
+                        category="popular"
+                        title="Popular Movies"
+                    />
+                </Card>
+
+                <Card className="movies-list-card">
+                    <MoviesList
+                        category="top_rated"
+                        title="Top Rated Movies"
+                    />
+                </Card>
+            </Content>
+        </Layout>
     );
 };
-

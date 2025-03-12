@@ -1,7 +1,7 @@
 // src/pages/MovieDetails.tsx
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useAppSelector } from '../store/store';
+import { useAppSelector } from '../store/hooks';  // Import from hooks file
 import { selectMovieById } from '../features/movieSearch/selectors';
 
 export const MovieDetails = () => {

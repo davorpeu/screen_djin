@@ -1,82 +1,91 @@
 // src/services/api/tmdb.ts
-import axios from 'axios';
-import { Movie, TvShow, SearchResults, MovieDetails, TvShowDetails } from 'types/movie.types';
+import axios, { AxiosError } from 'axios';
 
+// Define API response types
+interface ApiResponse<T> {
+    results: T[];
+    page: number;
+    total_pages: number;
+}
+
+// Define movie types
+interface Movie {
+    id: number;
+    title: string;
+    overview: string;
+    poster_path: string;
+    vote_average: number;
+    release_date?: string;
+}
+
+// Create API client with proper error handling
 const apiClient = axios.create({
-    baseURL: process.env.REACT_APP_TMDB_API_URL,
+    baseURL: import.meta.env.VITE_TMDB_API_URL,
     params: {
-        api_key: process.env.REACT_APP_TMDB_API_KEY,
+        api_key: import.meta.env.VITE_TMDB_API_KEY,
     },
 });
 
+// API endpoints
 export const tmdbApi = {
-    // Movies
-    getPopularMovies: async (page = 1): Promise<SearchResults> => {
-        const response = await apiClient.get<SearchResults>('/movie/popular', { params: { page } });
-        return response.data;
+    // Get popular movies
+    getPopularMovies: async (page: number = 1): Promise<ApiResponse<Movie>> => {
+        try {
+            const response = await apiClient.get('/movie/popular', { params: { page } });
+            return response.data;
+        } catch (error) {
+            throw new Error(`Failed to fetch popular movies: ${error.message}`);
+        }
     },
 
-    getTopRatedMovies: async (page = 1): Promise<SearchResults> => {
-        const response = await apiClient.get<SearchResults>('/movie/top_rated', { params: { page } });
-        return response.data;
+    // Get top rated movies
+    getTopRatedMovies: async (page: number = 1): Promise<ApiResponse<Movie>> => {
+        try {
+            const response = await apiClient.get('/movie/top_rated', { params: { page } });
+            return response.data;
+        } catch (error) {
+            throw new Error(`Failed to fetch top rated movies: ${error.message}`);
+        }
     },
 
-    getMovieDetails: async (id: number): Promise<MovieDetails> => {
-        const response = await apiClient.get<MovieDetails>(`/movie/${id}`, {
-            params: { append_to_response: 'videos,credits,reviews' }
-        });
-        return response.data;
+    // Get movie details
+    getMovieDetails: async (movieId: number): Promise<Movie> => {
+        try {
+            const response = await apiClient.get(`/movie/${movieId}`);
+            return response.data;
+        } catch (error) {
+            throw new Error(`Failed to fetch movie details: ${error.message}`);
+        }
     },
 
-    // TV Shows
-    getPopularTvShows: async (page = 1): Promise<SearchResults> => {
-        const response = await apiClient.get<SearchResults>('/tv/popular', { params: { page } });
-        return response.data;
+    // Search movies
+    searchMulti: async (query: string, page: number = 1): Promise<ApiResponse<Movie>> => {
+        try {
+            const response = await apiClient.get('/search/multi', {
+                params: {
+                    query,
+                    page,
+                    include_adult: false
+                }
+            });
+            return response.data;
+        } catch (error) {
+            throw new Error(`Failed to search movies: ${error.message}`);
+        }
     },
 
-    getTopRatedTvShows: async (page = 1): Promise<SearchResults> => {
-        const response = await apiClient.get<SearchResults>('/tv/top_rated', { params: { page } });
-        return response.data;
-    },
-
-    getTvShowDetails: async (id: number): Promise<TvShowDetails> => {
-        const response = await apiClient.get<TvShowDetails>(`/tv/${id}`, {
-            params: { append_to_response: 'videos,credits,reviews' }
-        });
-        return response.data;
-    },
-
-    // Search
-    searchMulti: async (query: string, page = 1): Promise<SearchResults> => {
-        const response = await apiClient.get<SearchResults>('/search/multi', {
-            params: { query, page }
-        });
-        return response.data;
-    },
-
-    // Genres
-    getMovieGenres: async () => {
-        const response = await apiClient.get('/genre/movie/list');
-        return response.data.genres;
-    },
-
-    getTvGenres: async () => {
-        const response = await apiClient.get('/genre/tv/list');
-        return response.data.genres;
-    },
-
-    // By genre
-    getMoviesByGenre: async (genreId: number, page = 1): Promise<SearchResults> => {
-        const response = await apiClient.get<SearchResults>('/discover/movie', {
-            params: { with_genres: genreId, page }
-        });
-        return response.data;
-    },
-
-    getTvShowsByGenre: async (genreId: number, page = 1): Promise<SearchResults> => {
-        const response = await apiClient.get<SearchResults>('/discover/tv', {
-            params: { with_genres: genreId, page }
-        });
-        return response.data;
+    // Get movies by genre
+    getMoviesByGenre: async (genreId: number, page: number = 1): Promise<ApiResponse<Movie>> => {
+        try {
+            const response = await apiClient.get('/discover/movie', {
+                params: {
+                    with_genres: genreId,
+                    page
+                }
+            });
+            return response.data;
+        } catch (error) {
+            throw new Error(`Failed to fetch movies by genre: ${error.message}`);
+        }
     }
 };
