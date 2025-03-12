@@ -1,10 +1,15 @@
-import './App.css'
-import { AppRoutes } from "./routes/";
+// src/App.tsx
+import React from 'react';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
+import { Router } from './router';
 
 function App() {
     return (
-        <AppRoutes />
+        <Provider store={store}>
+            <Router />
+        </Provider>
     );
 }
 
-export default App
+export default App;
