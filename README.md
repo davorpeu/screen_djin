@@ -19,4 +19,4 @@ src/
 │   ├── MovieDetails.tsx
 │   └── NotFound.tsx
 └── store/
-└── store.ts
+    └── store.ts
