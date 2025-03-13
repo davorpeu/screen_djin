@@ -1,41 +1,27 @@
-// components/SearchBar.tsx
 import React, { useState, useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../store/store';
-import { setSearchTerm, fetchMovies } from '../features/movieSearch/slice';
-import { MovieAPI } from '../features/movieSearch/api';
+import { useDispatch } from 'react-redux';
+import { searchContent } from '../store/slices/SearchSlicer';
+import { useAppSelector } from '../store/hooks';
 
 interface SearchBarProps {
     apiKey?: string;
     baseUrl?: string;
 }
 
-export const SearchBar: React.FC<SearchBarProps> = ({
-                                                        apiKey = process.env.REACT_APP_TMDB_API_KEY || '',
-                                                        baseUrl = 'https://api.themoviedb.org/3',
-                                                    }) => {
-    const dispatch = useAppDispatch();
-    const searchTerm = useAppSelector((state) => state.movies.searchTerm);
-    const [localSearch, setLocalSearch] = useState(searchTerm);
-    const movieApi = new MovieAPI({ apiKey, baseUrl });
+export const SearchBar: React.FC<SearchBarProps> = () => {
+    const dispatch = useDispatch();
+    const { query, loading } = useAppSelector((state) => state.search);
+    const [localSearch, setLocalSearch] = useState(query || '');
 
     useEffect(() => {
-        const timer = setTimeout(async () => {
-            dispatch(setSearchTerm(localSearch));
-            try {
-                dispatch(setLoading(true));
-                const movies = await movieApi.fetchMovies(localSearch);
-                dispatch(setMovies(movies.results));
-                dispatch(setTotalPages(movies.total_pages));
-                dispatch(setError(null));
-            } catch (error) {
-                dispatch(setError(error instanceof Error ? error.message : 'Unknown error'));
-            } finally {
-                dispatch(setLoading(false));
+        const timer = setTimeout(() => {
+            if (localSearch && localSearch.trim().length > 0) {
+                dispatch(searchContent({ query: localSearch }) as any);
             }
-        }, 300);
+        }, 500);
 
         return () => clearTimeout(timer);
-    }, [localSearch, dispatch, movieApi]);
+    }, [localSearch, dispatch]);
 
     return (
         <div className="search-container">
@@ -45,7 +31,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 onChange={(e) => setLocalSearch(e.target.value)}
                 placeholder="Search movies, TV series..."
                 aria-label="Search media"
+                disabled={loading}
             />
+            {loading && <span className="loading-indicator">Searching...</span>}
         </div>
     );
 };

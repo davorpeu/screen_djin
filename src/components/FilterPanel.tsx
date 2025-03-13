@@ -1,54 +1,76 @@
-// components/FilterPanel.tsx
 import React from 'react';
-import { useAppDispatch, useAppSelector } from '../store/store';
-import { setCurrentPage, setMovies, setLoading, setError } from '../features/movieSearch/slice';
-import { MovieAPI } from '../features/movieSearch/api';
+import { useDispatch } from 'react-redux';
+import { updateFilters } from '../store/slices/SearchSlicer';
+import { useAppSelector } from '../store/hooks';
 
-interface FilterPanelProps {
-    apiKey?: string;
-    baseUrl?: string;
-}
+export const FilterPanel: React.FC = () => {
+    const dispatch = useDispatch();
+    const filters = useAppSelector((state) => state.search.filters);
 
-export const FilterPanel: React.FC<FilterPanelProps> = ({
-                                                            apiKey = process.env.REACT_APP_TMDB_API_KEY || '',
-                                                            baseUrl = 'https://api.themoviedb.org/3',
-                                                        }) => {
-    const dispatch = useAppDispatch();
-    const currentPage = useAppSelector((state) => state.movies.currentPage);
-    const searchTerm = useAppSelector((state) => state.movies.searchTerm);
-    const movieApi = new MovieAPI({ apiKey, baseUrl });
+    const handleTypeChange = (type: 'all' | 'movie' | 'tv' | 'person') => {
+        dispatch(updateFilters({ type }));
+    };
 
-    const handleSortChange = async (sortOption: string) => {
-        try {
-            dispatch(setLoading(true));
-            const movies = await movieApi.fetchMovies(searchTerm, 1);
-            dispatch(setMovies(movies.results));
-            dispatch(setCurrentPage(1));
-            dispatch(setError(null));
-        } catch (error) {
-            dispatch(setError(error instanceof Error ? error.message : 'Unknown error'));
-        } finally {
-            dispatch(setLoading(false));
-        }
+    const handleGenreChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const genreId = e.target.value ? parseInt(e.target.value) : null;
+        dispatch(updateFilters({ genre: genreId }));
     };
 
     return (
         <div className="filter-panel">
-            <select
-                aria-label="Sort movies"
-                onChange={(e) => handleSortChange(e.target.value)}
-            >
-                <option value="popularity.desc">Most Popular</option>
-                <option value="vote_average.desc">Highest Rated</option>
-                <option value="release_date.desc">Newest First</option>
-            </select>
+            <div className="filter-type">
+                <button
+                    className={filters.type === 'all' ? 'active' : ''}
+                    onClick={() => handleTypeChange('all')}
+                >
+                    All
+                </button>
+                <button
+                    className={filters.type === 'movie' ? 'active' : ''}
+                    onClick={() => handleTypeChange('movie')}
+                >
+                    Movies
+                </button>
+                <button
+                    className={filters.type === 'tv' ? 'active' : ''}
+                    onClick={() => handleTypeChange('tv')}
+                >
+                    TV Shows
+                </button>
+                <button
+                    className={filters.type === 'person' ? 'active' : ''}
+                    onClick={() => handleTypeChange('person')}
+                >
+                    People
+                </button>
+            </div>
 
-            <button
-                onClick={() => dispatch(setCurrentPage(1))}
-                aria-label="Reset filters"
+            <select
+                value={filters.genre?.toString() || ''}
+                onChange={handleGenreChange}
+                aria-label="Filter by genre"
             >
-                Reset Filters
-            </button>
+                <option value="">All Genres</option>
+                <option value="28">Action</option>
+                <option value="12">Adventure</option>
+                <option value="16">Animation</option>
+                <option value="35">Comedy</option>
+                <option value="80">Crime</option>
+                <option value="99">Documentary</option>
+                <option value="18">Drama</option>
+                <option value="10751">Family</option>
+                <option value="14">Fantasy</option>
+                <option value="36">History</option>
+                <option value="27">Horror</option>
+                <option value="10402">Music</option>
+                <option value="9648">Mystery</option>
+                <option value="10749">Romance</option>
+                <option value="878">Science Fiction</option>
+                <option value="10770">TV Movie</option>
+                <option value="53">Thriller</option>
+                <option value="10752">War</option>
+                <option value="37">Western</option>
+            </select>
         </div>
     );
 };
