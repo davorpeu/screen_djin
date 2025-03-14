@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { updateFilters } from '../store/slices/SearchSlicer';
+import { updateFilters } from '../store/slices/searchSlice';
 import { useAppSelector } from '../store/hooks';
 
 export const FilterPanel: React.FC = () => {

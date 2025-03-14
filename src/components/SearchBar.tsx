@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { searchContent } from '../store/slices/SearchSlicer';
+import { searchContent } from '../store/slices/searchSlice';
 import { useAppSelector } from '../store/hooks';
 
 interface SearchBarProps {

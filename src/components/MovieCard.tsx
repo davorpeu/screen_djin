@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { Movie } from '../types/movie.types';
 
 interface MovieCardProps {
-    movie: Movie;
+    movie?: Movie;  // Make it optional
 }
 
 export const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
     if (!movie) {
-        return <div className="movie-card-error">Movie data not available</div>;
+        return <div className="movie-card skeleton">
+            {/* Skeleton UI */}
+        </div>;
     }
 
     return (

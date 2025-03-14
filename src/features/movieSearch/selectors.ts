@@ -17,16 +17,6 @@ export const selectMovieById = createSelector(
 );
 
 // Selector to get movies by category
-export const selectMoviesByCategory = createSelector(
-    [(state: RootState) => state.movies],
-    (moviesState) => (category: string) => {
-        switch (category) {
-            case 'popular':
-                return moviesState.popular.results;
-            case 'top_rated':
-                return moviesState.topRated.results;
-            default:
-                return [];
-        }
-    }
-);
+export const selectMoviesByCategory = (state, category: 'popular' | 'top_rated') => {
+    return category === 'popular' ? state.movies.popular.results : state.movies.topRated.results;
+};

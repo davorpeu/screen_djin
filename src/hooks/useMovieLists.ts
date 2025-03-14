@@ -1,11 +1,11 @@
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '../hooks';
 import {
     createList,
     deleteList,
     addMovieToList,
     removeMovieFromList,
     renameList
-} from '@/stores/slices/movieListsSlice';
+} from '../store/slices/userListsSlice';
 import { Movie } from '@/types/movie.types';
 
 export const useMovieLists = () => {

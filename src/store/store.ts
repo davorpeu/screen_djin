@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { moviesReducer } from './slices/movieSlice';
-import { searchReducer } from './slices/SearchSlicer';
+import { searchReducer } from './slices/searchSlice';
 import { userListsReducer } from './slices/userListsSlice';
 
 // Create store with proper type annotations

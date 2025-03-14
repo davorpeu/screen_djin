@@ -14,14 +14,26 @@ export const MoviesList: React.FC<MoviesListProps> = ({ category, title }) => {
         selectMoviesByCategory(state, category)
     );
 
-    if (!movies || !Array.isArray(movies)) {
+    const loading = useAppSelector((state) =>
+        category === 'popular' ? state.movies.popular.loading : state.movies.topRated.loading
+    );
+
+    if (loading || !movies || !Array.isArray(movies)) {
         return (
-            <div className="movies-list">
+            <div className="movies-list" >
                 <h2>{title}</h2>
                 <div className="movies-grid">
-                    {/* Loading state */}
+                    {/* Loading state - create empty placeholder objects for the skeleton */}
                     {[...Array(8)].map((_, index) => (
-                        <MovieCard key={`skeleton-${index}`} />
+                        <MovieCard
+                            key={`skeleton-${index}`}
+                            movie={{
+                                id: `skeleton-${index}`,
+                                title: 'Loading...',
+                                poster_path: '',
+                                // Add other required Movie properties with default values
+                            } as any}
+                        />
                     ))}
                 </div>
             </div>
