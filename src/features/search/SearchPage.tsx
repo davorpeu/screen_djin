@@ -17,14 +17,14 @@ export const SearchPage: React.FC = () => {
     const hasResults = results.length > 0;
 
     return (
-        <div >
-            <h1 >Search Movies and TV Shows</h1>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h1 className="text-3xl font-bold text-white mb-8">Search Movies and TV Shows</h1>
 
             <SearchBar />
 
             {searchTerm && !isLoading && !hasResults && (
-                <div >
-                    <p >No results found for "{searchTerm}"</p>
+                <div className="text-center py-12">
+                    <p className="text-xl text-gray-400">No results found for "{searchTerm}"</p>
                 </div>
             )}
 
@@ -41,8 +41,8 @@ export const SearchPage: React.FC = () => {
             )}
 
             {!searchTerm && (
-                <div >
-                    <p >Start searching for movies and TV shows!</p>
+                <div className="text-center py-12">
+                    <p className="text-xl text-gray-400">Start searching for movies and TV shows!</p>
                 </div>
             )}
         </div>
