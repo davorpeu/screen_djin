@@ -1,12 +1,12 @@
-import { useAppDispatch, useAppSelector } from '@/hooks';
-import { fetchMovieDetails, fetchTrendingMovies } from '@/stores/slices/moviesSlice';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import { fetchMovieDetails, fetchPopularMovies } from '../store/slices/movieSlice';
 
 export const useMovies = () => {
     const dispatch = useAppDispatch();
     const { trending, selectedMovie, status, error } = useAppSelector((state) => state.movies);
 
     const getTrending = (mediaType: 'all' | 'movie' | 'tv' = 'all', timeWindow: 'day' | 'week' = 'week') => {
-        dispatch(fetchTrendingMovies({ mediaType, timeWindow }));
+        dispatch(fetchPopularMovies({ mediaType, timeWindow }));
     };
 
     const getMovieDetails = (id: number, mediaType: 'movie' | 'tv') => {

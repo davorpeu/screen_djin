@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Card, Rate } from 'antd';
 import { Movie } from '../types/movie.types';
 
 interface MovieCardProps {
@@ -8,26 +9,55 @@ interface MovieCardProps {
 
 export const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
     if (!movie) {
-        return <div className="movie-card skeleton">
-            {/* Skeleton UI */}
-        </div>;
+        return (
+            <Card loading style={{ height: '100%', width: '100%' }} />
+        );
     }
 
     return (
-        <div className="movie-card">
-            <Link to={`/movie/${movie.id}`}>
+        <Card
+            hoverable
+            style={{ height: '100%' }}
+            cover={
                 <img
+                    alt={movie.title}
                     src={movie.poster_path
                         ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
                         : 'https://via.placeholder.com/500x750?text=No+Image'
                     }
-                    alt={movie.title}
+                    style={{
+                        height: '300px',
+                        objectFit: 'cover',
+                        objectPosition: 'center top'
+                    }}
                     onError={(e) => {
                         (e.target as HTMLImageElement).src = 'https://via.placeholder.com/500x750?text=No+Image';
                     }}
                 />
-                <h3>{movie.title}</h3>
+            }
+        >
+            <Link to={`/movie/${movie.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                <Card.Meta
+                    title={movie.title}
+                    description={
+                        <>
+                            <div style={{ marginBottom: '8px' }}>
+                                {movie.release_date && (
+                                    <span>{new Date(movie.release_date).getFullYear()}</span>
+                                )}
+                            </div>
+                            {movie.vote_average && (
+                                <Rate
+                                    disabled
+                                    allowHalf
+                                    defaultValue={movie.vote_average / 2}
+                                    style={{ fontSize: '16px' }}
+                                />
+                            )}
+                        </>
+                    }
+                />
             </Link>
-        </div>
+        </Card>
     );
 };

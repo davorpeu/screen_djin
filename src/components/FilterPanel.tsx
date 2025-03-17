@@ -17,8 +17,8 @@ export const FilterPanel: React.FC = () => {
     };
 
     return (
-        <div className="filter-panel">
-            <div className="filter-type">
+        <div >
+            <div >
                 <button
                     className={filters.type === 'all' ? 'active' : ''}
                     onClick={() => handleTypeChange('all')}

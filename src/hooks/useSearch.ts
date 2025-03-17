@@ -1,6 +1,6 @@
-import { useAppDispatch, useAppSelector } from '@/hooks';
-import { performSearch, setSearchTerm, setPage, updateFilters, resetFilters } from '@/stores/slices/searchSlice';
-import { SearchParams } from '@/types/movie.types';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import { performSearch, setSearchTerm, setPage, updateFilters, resetFilters } from '../store/slices/searchSlice';
+import { SearchParams } from '../types/movie.types';
 
 export const useSearch = () => {
     const dispatch = useAppDispatch();
