@@ -1,5 +1,5 @@
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { fetchMovieDetails, fetchPopularMovies } from '../store/slices/movieSlice';
+import { useAppDispatch, useAppSelector } from '@/hooks';
+import { fetchMovieDetails, fetchTrendingMovies } from '@/stores/slices/moviesSlice';
 
 export const useMovies = () => {
     const dispatch = useAppDispatch();
