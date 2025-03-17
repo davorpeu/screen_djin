@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Movie } from '../types/movie.types';
-import { Button, Popover, Space } from 'antd';
 
 interface MovieCardProps {
     movie?: Movie;  // Make it optional
