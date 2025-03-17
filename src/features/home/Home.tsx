@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks';
+import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { MoviesList } from '../../components/movies/MoviesList';
 import { fetchPopularMovies, fetchTopRatedMovies } from '../../store/slices/movieSlice';
-import { Layout, Card, Typography, Input, Empty } from 'antd';
+import { Layout, Card, Typography, Input, Space, Empty } from 'antd';
 import { searchMovies } from '../../store/slices/searchSlice';
 import { MovieCard } from '../../components/MovieCard';
 import { Col, Row } from 'antd';
