@@ -20,9 +20,9 @@ export const MoviesList: React.FC<MoviesListProps> = ({ category, title }) => {
 
     if (loading || !movies || !Array.isArray(movies)) {
         return (
-            <div className="movies-list" >
+            <div  >
                 <h2>{title}</h2>
-                <div className="movies-grid">
+                <div >
                     {/* Loading state - create empty placeholder objects for the skeleton */}
                     {[...Array(8)].map((_, index) => (
                         <MovieCard
@@ -41,9 +41,9 @@ export const MoviesList: React.FC<MoviesListProps> = ({ category, title }) => {
     }
 
     return (
-        <div className="movies-list">
+        <div >
             <h2>{title}</h2>
-            <div className="movies-grid">
+            <div >
                 {movies.map((movie) => (
                     <MovieCard key={movie.id} movie={movie} />
                 ))}

@@ -24,7 +24,7 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
     }, [localSearch, dispatch]);
 
     return (
-        <div className="search-container">
+        <div >
             <input
                 type="text"
                 value={localSearch}
@@ -33,7 +33,7 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
                 aria-label="Search media"
                 disabled={loading}
             />
-            {loading && <span className="loading-indicator">Searching...</span>}
+            {loading && <span >Searching...</span>}
         </div>
     );
 };

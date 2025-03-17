@@ -5,7 +5,7 @@ import { fetchPopularMovies, fetchTopRatedMovies } from '../../store/slices/movi
 import { Layout, Card, Typography, Input, Space, Empty } from 'antd';
 import { searchMovies } from '../../store/slices/searchSlice';
 import { MovieCard } from '../../components/MovieCard';
-
+import { Col, Row } from 'antd';
 // Destructure Ant Design components with proper typing
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -38,17 +38,22 @@ export const Home: React.FC<HomeProps> = () => {
     };
 
     return (
-        <Layout className="home-page">
+        <Layout >
             {/* Hero Section */}
-            <Header className="hero">
-                <div className="hero__content" >
-                    <Title level={1}>Discover Movies & TV Shows</Title>
-                    <Text className="hero__description">
+            <Header >
+                <div  >
+                    <Title level={1}  style={{
+                        textAlign: 'left',
+                        fontSize: '18px',
+                        color: '#1A91DA',
+                        marginBottom: '16px'
+                    }}>Discover Movies & TV Shows</Title>
+                    <Text >
                         Find and track your favorite entertainment from around the world
                     </Text>
 
                     {/* Search Container */}
-                    <div className="search-container" style={{
+                    <div  style={{
                         margin: '320px 160px 320px 160px',
                     }}>
                         <Search
@@ -58,24 +63,29 @@ export const Home: React.FC<HomeProps> = () => {
                             size="large"
                             onSearch={handleSearch}
                             loading={isSearching}
-                            className="search-input"
+                            
                         />
                     </div>
                 </div>
             </Header>
 
-            <Content className="content-section">
+            <Content >
                 {searchTerm && (
-                    <Card className="movies-list-card">
-                        <div className="search-results">
+                    <Card >
+                        <div >
                             <Title level={3}>Search Results for "{searchTerm}"</Title>
-
+                            <Row>
+                                <Col span={8}>col-8</Col>
+                                <Col span={8}>col-8</Col>
+                                <Col span={8}>col-8</Col>
+                            </Row>
                             {searchResults.length > 0 ? (
-                                <div className="movies-grid">
+                                <div >
                                     {searchResults.map(movie => (
                                         <MovieCard key={movie.id} movie={movie} />
                                     ))}
                                 </div>
+
                             ) : (
                                 <Empty description="No movies found" />
                             )}
@@ -85,15 +95,15 @@ export const Home: React.FC<HomeProps> = () => {
 
                 {!searchTerm && (
                     <>
-                        <Card className="movies-list-card">
+                      {/*  <Card >
                             <MoviesList
                                 category="popular"
                                 title="Popular Movies"
 
                             />
-                        </Card>
+                        </Card>*/}
 
-                        <Card className="movies-list-card">
+                        <Card >
                             <MoviesList
                                 category="top_rated"
                                 title="Top Rated Movies"
