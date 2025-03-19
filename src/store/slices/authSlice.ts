@@ -28,7 +28,7 @@ export const login = createAsyncThunk(
         try {
           //  const response = await tmdbApi.validateToken(credentials);
          //   const sessionId = await tmdbApi.createSession(response.request_token);
-            return sessionId;
+            //return sessionId;
         } catch (error) {
             return rejectWithValue(error.message);
         }
