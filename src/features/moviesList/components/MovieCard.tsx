@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Rate } from 'antd';
-import { Movie } from '../types/movie.types';
+import { Movie } from '../../../types/movie.types';
 
 interface MovieCardProps {
     movie?: Movie;  // Make it optional

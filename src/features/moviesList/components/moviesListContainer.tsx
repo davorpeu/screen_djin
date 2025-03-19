@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
-import { MoviesList } from '../../components/movies/MoviesList';
-import { fetchPopularMovies, fetchTopRatedMovies } from '../../store/slices/movieSlice';
+import { useAppDispatch, useAppSelector } from '../../../hooks';
+import { fetchPopularMovies, fetchTopRatedMovies } from '../../../store/slices/movieSlice';
 import { Layout, Card, Typography, Input, Empty, Row, Col, Pagination, Tabs, Button, Modal } from 'antd';
-import { searchMovies } from '../../store/slices/searchSlice';
-import { MovieCard } from '../../components/MovieCard';
-import { PlayCircleOutlined, UnorderedListOutlined, FireOutlined, StarOutlined } from '@ant-design/icons';
+import { searchMovies } from '../../../store/slices/searchSlice';
+import { MovieCard } from './MovieCard';
+import { PlayCircleOutlined, UnorderedListOutlined, FireOutlined,  } from '@ant-design/icons';
 import { PlusOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -29,7 +28,7 @@ interface MovieList {
 }
 interface HomeProps {}
 
-export const Home: React.FC<HomeProps> = () => {
+export const MoviesListContainer: React.FC<HomeProps> = () => {
     const dispatch = useAppDispatch();
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [currentPage, setCurrentPage] = useState<number>(1);

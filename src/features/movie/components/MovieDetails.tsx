@@ -1,8 +1,8 @@
 // In your MovieDetails.tsx
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { fetchMovieDetails } from '../../store/slices/movieSlice';
+import { useAppSelector, useAppDispatch } from '../../../store/hooks';
+import { fetchMovieDetails } from '../../../store/slices/movieSlice';
 
 export const MovieDetails = () => {
     const { id } = useParams();

@@ -1,8 +1,8 @@
 // src/components/movies/MoviesList.tsx
 import React from 'react';
-import { useAppSelector } from '../../hooks/useAppDispatch';
-import { selectMoviesByCategory } from '../../features/movieSearch/selectors';
-import { MovieCard } from '../../components/MovieCard';
+import { useAppSelector } from '../../../hooks';
+import { selectMoviesByCategory } from '../../movieSearch/selectors';
+import { MovieCard } from './MovieCard';
 
 interface MoviesListProps {
     category: 'popular' | 'top_rated';
