@@ -176,7 +176,7 @@ export const MovieDetails = () => {
                                 />
                             )}
 
-                            <Row gutter={[24, 24]}>
+                            <Row   gutter={[24, 24]}>
                                 {youtubeTrailers.map(trailer => (
                                     <Col xs={24} sm={12} md={8} key={trailer.id}>
                                         <Card

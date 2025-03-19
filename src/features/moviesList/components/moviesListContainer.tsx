@@ -4,7 +4,7 @@ import { fetchPopularMovies, fetchTopRatedMovies } from '../../../store/slices/m
 import { Layout, Card, Typography, Input, Empty, Row, Col, Pagination, Tabs, Button, Modal } from 'antd';
 import { searchMovies } from '../../../store/slices/searchSlice';
 import { MovieCard } from './MovieCard';
-import { PlayCircleOutlined, UnorderedListOutlined, FireOutlined,  } from '@ant-design/icons';
+import {  UnorderedListOutlined, FireOutlined,  } from '@ant-design/icons';
 import { PlusOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -47,10 +47,7 @@ export const MoviesListContainer: React.FC<HomeProps> = () => {
     const popularMovies = useAppSelector(state => state.movies?.popular?.results || []);
     const topRatedMovies = useAppSelector(state => state.movies?.topRated?.results || []);
 
-    const mockTrailers: Trailer[] = [
-
-    ];
-
+    const isLoggedin=false;
     // Effect hook for initial data fetching
     useEffect(() => {
         dispatch(fetchPopularMovies());
@@ -98,10 +95,6 @@ export const MoviesListContainer: React.FC<HomeProps> = () => {
         setCurrentPage(1); // Reset pagination on tab change
     };
 
-    const openTrailer = (trailer: Trailer): void => {
-        setCurrentTrailer(trailer);
-        setTrailerModalVisible(true);
-    };
 
     const closeTrailer = (): void => {
         setTrailerModalVisible(false);
@@ -133,9 +126,7 @@ export const MoviesListContainer: React.FC<HomeProps> = () => {
         return Array.isArray(popularMovies) ? popularMovies.length : 0;
     };
 
-    const getPaginatedTrailers = () => {
-        return getPaginatedData(mockTrailers);
-    };
+
 
     return (
         <Layout>
@@ -177,31 +168,30 @@ export const MoviesListContainer: React.FC<HomeProps> = () => {
                             marginTop: '16px',
                             color: 'white'
                         }}
-                    >
-                        <TabPane
-                            tab={
-                                <span style={{ color: 'white', fontSize: '16px' }}>
+                    ><TabPane
+
+                        tab={
+                            <span style={{ color: 'white', fontSize: '16px' }}>
                                     <FireOutlined /> Discover
                                 </span>
-                            }
-                            key="discover"
-                        />
-                        <TabPane
-                            tab={
-                                <span style={{ color: 'white', fontSize: '16px' }}>
-                                    <PlayCircleOutlined /> Trailers
-                                </span>
-                            }
-                            key="trailers"
-                        />
-                        <TabPane
-                            tab={
-                                <span style={{ color: 'white', fontSize: '16px' }}>
+                        }
+
+                        key="discover"
+                    />
+                        <>
+                            {isLoggedin ? (
+                            <TabPane
+                                tab={
+                                    <span style={{ color: 'white', fontSize: '16px' }}>
                                     <UnorderedListOutlined /> My Lists
                                 </span>
-                            }
-                            key="lists"
-                        />
+                                }
+                                key="lists"
+                            />  ) : null}
+
+                        </>
+
+
                     </Tabs>
                 </div>
             </Header>
@@ -305,58 +295,7 @@ export const MoviesListContainer: React.FC<HomeProps> = () => {
                     </>
                 )}
 
-                {/* Trailers Tab Content */}
-                {activeTab === 'trailers' && (
-                    <Card>
-                        <Title level={3} style={{ marginBottom: '24px' }}>Latest Movie Trailers</Title>
-                        <Row gutter={[24, 24]}>
-                            {getPaginatedTrailers().map(trailer => (
-                                <Col xs={24} sm={12} md={8} key={trailer.id}>
-                                    <Card
-                                        hoverable
-                                        cover={
-                                            <div style={{ position: 'relative' }}>
-                                                <img
-                                                    alt={`${trailer.movieTitle} trailer`}
-                                                    src={trailer.thumbnail}
-                                                    style={{ width: '100%', height: '180px', objectFit: 'cover' }}
-                                                />
-                                                <PlayCircleOutlined
-                                                    style={{
-                                                        position: 'absolute',
-                                                        top: '50%',
-                                                        left: '50%',
-                                                        transform: 'translate(-50%, -50%)',
-                                                        fontSize: '48px',
-                                                        color: 'white',
-                                                        opacity: 0.8,
-                                                        cursor: 'pointer'
-                                                    }}
-                                                    onClick={() => openTrailer(trailer)}
-                                                />
-                                            </div>
-                                        }
-                                        onClick={() => openTrailer(trailer)}
-                                    >
-                                        <Card.Meta
-                                            title={trailer.movieTitle}
-                                            description={trailer.name}
-                                        />
-                                    </Card>
-                                </Col>
-                                ))}
-                        </Row>
-                        <div style={{ marginTop: '24px', textAlign: 'center' }}>
-                            <Pagination
-                                current={currentPage}
-                                pageSize={pageSize}
-                                total={mockTrailers.length}
-                                onChange={handlePageChange}
-                                showSizeChanger={false}
-                            />
-                        </div>
-                    </Card>
-                    )}
+
 
                 {/* Lists Tab Content */}
                 {activeTab === 'lists' && (
