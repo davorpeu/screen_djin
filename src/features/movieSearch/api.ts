@@ -1,4 +1,3 @@
-// features/movieSearch/api.ts
 import axios from 'axios';
 import { MovieList } from '../shared/types';
 

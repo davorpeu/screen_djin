@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Movie, TvShow, SearchResults, MovieDetails, TvShowDetails } from '../../types/movie.types';
+import { SearchResults, MovieDetails, } from '../../types/movie.types';
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY || '';
 const BASE_URL = 'https://api.themoviedb.org/3';
@@ -37,24 +37,11 @@ export const tmdbApi = {
         });
         return response.data;
     },
-
-    // TV Show endpoints
-    getPopularTVShows: async (page = 1): Promise<SearchResults> => {
-        const response = await api.get('/tv/popular', { params: { page } });
+    getMovieVideos: async (id: number) => {
+        const response = await api.get(`/movie/${id}/videos`);
         return response.data;
     },
 
-    getTopRatedTVShows: async (page = 1): Promise<SearchResults> => {
-        const response = await api.get('/tv/top_rated', { params: { page } });
-        return response.data;
-    },
-
-    getTVShowDetails: async (id: number): Promise<TvShowDetails> => {
-        const response = await api.get(`/tv/${id}`, {
-            params: { append_to_response: 'videos,credits,reviews' },
-        });
-        return response.data;
-    },
 
     // Search endpoints
     searchMovies: async (query: string, page = 1): Promise<SearchResults> => {

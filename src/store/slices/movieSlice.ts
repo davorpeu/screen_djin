@@ -2,6 +2,32 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { tmdbApi } from '../../services/api/tmdb';
 import { Movie, MovieDetails, SearchResults } from '../../types/movie.types';
 
+// Add trailer types
+interface Trailer {
+    id: string;
+    key: string;
+    name: string;
+    site: string;
+    size: number;
+    type: string;
+    official: boolean;
+}
+
+interface TrailerResponse {
+    id: number;
+    results: Trailer[];
+}
+
+// Update MovieDetails interface in your types file to include trailers
+interface MovieDetailsState {
+    data: MovieDetails | null;
+    trailers: Trailer[];
+    loading: boolean;
+    trailersLoading: boolean;
+    error: string | null;
+    trailersError: string | null;
+}
+
 interface MoviesState {
     popular: {
         results: Movie[];
@@ -17,11 +43,7 @@ interface MoviesState {
         loading: boolean;
         error: string | null;
     };
-    movieDetails: {
-        data: MovieDetails | null;
-        loading: boolean;
-        error: string | null;
-    };
+    movieDetails: MovieDetailsState;
     byGenre: Record<number, {
         results: Movie[];
         page: number;
@@ -48,8 +70,11 @@ const initialState: MoviesState = {
     },
     movieDetails: {
         data: null,
+        trailers: [],
         loading: false,
+        trailersLoading: false,
         error: null,
+        trailersError: null,
     },
     byGenre: {},
 };
@@ -72,6 +97,15 @@ export const fetchMovieDetails = createAsyncThunk(
     'movies/fetchDetails',
     async (id: number) => {
         return await tmdbApi.getMovieDetails(id);
+    }
+);
+
+// Add new thunk for fetching movie trailers
+export const fetchMovieTrailers = createAsyncThunk(
+    'movies/fetchTrailers',
+    async (id: number) => {
+        // You'll need to implement this API method
+        return await tmdbApi.getMovieVideos(id);
     }
 );
 
@@ -135,6 +169,20 @@ const moviesSlice = createSlice({
                 state.movieDetails.error = action.error.message || 'Failed to fetch movie details';
             })
 
+            // Movie trailers
+            .addCase(fetchMovieTrailers.pending, (state) => {
+                state.movieDetails.trailersLoading = true;
+                state.movieDetails.trailersError = null;
+            })
+            .addCase(fetchMovieTrailers.fulfilled, (state, action: PayloadAction<TrailerResponse>) => {
+                state.movieDetails.trailersLoading = false;
+                state.movieDetails.trailers = action.payload.results;
+            })
+            .addCase(fetchMovieTrailers.rejected, (state, action) => {
+                state.movieDetails.trailersLoading = false;
+                state.movieDetails.trailersError = action.error.message || 'Failed to fetch movie trailers';
+            })
+
             // Movies by genre
             .addCase(fetchMoviesByGenre.pending, (state, action) => {
                 const genreId = action.meta.arg.genreId;
@@ -170,10 +218,12 @@ const moviesSlice = createSlice({
             });
     },
 });
+
 export const moviesActions = {
     fetchPopularMovies,
     fetchTopRatedMovies,
     fetchMovieDetails,
+    fetchMovieTrailers,
     fetchMoviesByGenre,
 };
 
