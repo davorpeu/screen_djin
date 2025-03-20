@@ -22,10 +22,14 @@ interface TrailerResponse {
 interface MovieDetailsState {
     data: MovieDetails | null;
     trailers: Trailer[];
+    reviews: any[]; // or create a Review interface
     loading: boolean;
     trailersLoading: boolean;
+    reviewsLoading: boolean;
     error: string | null;
     trailersError: string | null;
+    reviewsError: string | null;
+    reviewsTotalPages: number;
 }
 
 interface MoviesState {
@@ -33,12 +37,14 @@ interface MoviesState {
         results: Movie[];
         page: number;
         total_pages: number;
+        total_results?: number;
         loading: boolean;
         error: string | null;
     };
     topRated: {
         results: Movie[];
         page: number;
+        total_results: number;
         total_pages: number;
         loading: boolean;
         error: string | null;
@@ -71,14 +77,23 @@ const initialState: MoviesState = {
     movieDetails: {
         data: null,
         trailers: [],
+        reviews: [],
         loading: false,
         trailersLoading: false,
+        reviewsLoading: false,
         error: null,
         trailersError: null,
+        reviewsError: null,
+        reviewsTotalPages: 0
     },
     byGenre: {},
 };
-
+export const fetchMovieReviews = createAsyncThunk(
+    'movies/fetchReviews',
+    async ({ movieId, page = 1 }: { movieId: number; page: number }) => {
+        return await tmdbApi.getMovieReviews(movieId, page);
+    }
+);
 export const fetchPopularMovies = createAsyncThunk(
     'movies/fetchPopular',
     async (page: number = 1) => {
@@ -168,7 +183,19 @@ const moviesSlice = createSlice({
                 state.movieDetails.loading = false;
                 state.movieDetails.error = action.error.message || 'Failed to fetch movie details';
             })
-
+            .addCase(fetchMovieReviews.pending, (state) => {
+                state.movieDetails.reviewsLoading = true;
+                state.movieDetails.reviewsError = null;
+            })
+            .addCase(fetchMovieReviews.fulfilled, (state, action) => {
+                state.movieDetails.reviewsLoading = false;
+                state.movieDetails.reviews = action.payload.results;
+                state.movieDetails.reviewsTotalPages = action.payload.total_pages;
+            })
+            .addCase(fetchMovieReviews.rejected, (state, action) => {
+                state.movieDetails.reviewsLoading = false;
+                state.movieDetails.reviewsError = action.error.message || 'Failed to fetch movie reviews';
+            })
             // Movie trailers
             .addCase(fetchMovieTrailers.pending, (state) => {
                 state.movieDetails.trailersLoading = true;

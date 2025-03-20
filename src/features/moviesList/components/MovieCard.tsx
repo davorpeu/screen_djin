@@ -23,7 +23,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
                     alt={movie.title}
                     src={movie.poster_path
                         ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                        : 'https://via.placeholder.com/500x750?text=No+Image'
+                        : 'https://critics.io/img/movies/poster-placeholder.png'
                     }
                     style={{
                         height: '300px',
@@ -31,7 +31,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
                         objectPosition: 'center top'
                     }}
                     onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://via.placeholder.com/500x750?text=No+Image';
+                        (e.target as HTMLImageElement).src = 'https://critics.io/img/movies/poster-placeholder.png';
                     }}
                 />
             }

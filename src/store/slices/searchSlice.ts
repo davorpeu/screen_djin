@@ -6,7 +6,7 @@ interface SearchState {
     results: Movie[];
     loading: boolean;
     error: string | null;
-    totalPages: number;
+    total_pages: number;
     currentPage: number;
 }
 
@@ -14,15 +14,16 @@ const initialState: SearchState = {
     results: [],
     loading: false,
     error: null,
-    totalPages: 0,
+    total_pages: 0,
     currentPage: 1
 };
 
 export const searchMovies = createAsyncThunk(
     'search/searchMovies',
-    async (query: string, { rejectWithValue }) => {
+    async (params: { query: string; page?: number }, { rejectWithValue }) => {
         try {
-            return await tmdbApi.searchMovies(query);
+            const { query, page = 1 } = params;
+            return await tmdbApi.searchMovies(query, page);
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -48,7 +49,7 @@ const searchSlice = createSlice({
             .addCase(searchMovies.fulfilled, (state, action: PayloadAction<SearchResults>) => {
                 state.loading = false;
                 state.results = action.payload.results as Movie[];
-                state.totalPages = action.payload.total_pages;
+                state.total_pages = action.payload.total_pages;
                 state.currentPage = action.payload.page;
             })
             .addCase(searchMovies.rejected, (state, action) => {

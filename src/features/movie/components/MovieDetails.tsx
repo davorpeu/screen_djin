@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../../hooks';
-import { fetchMovieDetails, fetchMovieTrailers } from '../../../store/slices/movieSlice';
-import { Layout, Card, Typography, Spin, Row, Col, Tag, Rate, Divider, Tabs, Empty, Modal } from 'antd';
-import { PlayCircleOutlined, ClockCircleOutlined, CalendarOutlined, StarOutlined } from '@ant-design/icons';
+import { fetchMovieDetails, fetchMovieTrailers, fetchMovieReviews } from '../../../store/slices/movieSlice';
+import { Layout, Card, Typography, Spin, Row, Col, Tag, Rate, Divider, Tabs, Empty, Modal, Avatar, List, Pagination, } from 'antd';
+import { Comment } from '@ant-design/compatible'
+import { PlayCircleOutlined, ClockCircleOutlined, CalendarOutlined, StarOutlined, UserOutlined } from '@ant-design/icons';
 
 const { Header, Content } = Layout;
 const { Title, Text, Paragraph } = Typography;
@@ -15,6 +16,7 @@ export const MovieDetails = () => {
     const movieId = Number(id);
     const [currentTrailer, setCurrentTrailer] = useState<any>(null);
     const [trailerModalVisible, setTrailerModalVisible] = useState<boolean>(false);
+    const [reviewPage, setReviewPage] = useState<number>(1);
 
     const {
         data: movie,
@@ -22,13 +24,18 @@ export const MovieDetails = () => {
         error,
         trailers,
         trailersLoading,
-        trailersError
+        trailersError,
+        reviews,
+        reviewsLoading,
+        reviewsError,
+        reviewsTotalPages
     } = useAppSelector((state) => state.movies.movieDetails);
 
     useEffect(() => {
         dispatch(fetchMovieDetails(movieId));
         dispatch(fetchMovieTrailers(movieId));
-    }, [dispatch, movieId]);
+        dispatch(fetchMovieReviews({ movieId, page: reviewPage }));
+    }, [dispatch, movieId, reviewPage]);
 
     // Function to get YouTube trailers only
     const getYouTubeTrailers = () => {
@@ -48,6 +55,11 @@ export const MovieDetails = () => {
     const closeTrailer = (): void => {
         setTrailerModalVisible(false);
         setCurrentTrailer(null);
+    };
+
+    const handleReviewPageChange = (page: number) => {
+        setReviewPage(page);
+        window.scrollTo(0, 0);
     };
 
     if (loading) {
@@ -70,6 +82,16 @@ export const MovieDetails = () => {
     }
 
     const youtubeTrailers = getYouTubeTrailers();
+
+    // Format date for reviews
+    const formatReviewDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
 
     return (
         <Layout>
@@ -176,7 +198,7 @@ export const MovieDetails = () => {
                                 />
                             )}
 
-                            <Row   gutter={[24, 24]}>
+                            <Row gutter={[24, 24]}>
                                 {youtubeTrailers.map(trailer => (
                                     <Col xs={24} sm={12} md={8} key={trailer.id}>
                                         <Card
@@ -215,7 +237,117 @@ export const MovieDetails = () => {
                             </Row>
                         </Card>
                     </TabPane>
-                    <TabPane tab="Details" key="2">
+
+                    <TabPane tab="Reviews" key="2">
+                        <Card>
+                            {reviewsLoading && (
+                                <div style={{ textAlign: 'center', padding: '24px' }}>
+                                    <Spin tip="Loading reviews..." />
+                                </div>
+                            )}
+
+                            {reviewsError && (
+                                <Empty
+                                    description="Error loading reviews"
+                                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                />
+                            )}
+
+                            {!reviewsLoading && (!reviews || reviews.length === 0) && (
+                                <Empty
+                                    description="No reviews available for this movie"
+                                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                />
+                            )}
+
+                            {!reviewsLoading && reviews && reviews.length > 0 && (
+                                <>
+                                    <List
+                                        itemLayout="vertical"
+                                        dataSource={reviews}
+                                        renderItem={(review) => {
+                                            const avatarUrl = review.author_details?.avatar_path
+                                                ? (review.author_details.avatar_path.startsWith('/')
+                                                    ? `https://image.tmdb.org/t/p/w45${review.author_details.avatar_path}`
+                                                    : review.author_details.avatar_path)
+                                                : null;
+
+                                            const rating = review.author_details?.rating;
+
+                                            return (
+                                                <List.Item>
+                                                    <Comment
+                                                        author={
+                                                            <div>
+                                                                <Text strong>{review.author}</Text>
+                                                                {rating && (
+                                                                    <div style={{ marginTop: '4px' }}>
+                                                                        <Rate
+                                                                            disabled
+                                                                            allowHalf
+                                                                            defaultValue={rating / 2}
+                                                                            style={{ fontSize: '14px' }}
+                                                                        />
+                                                                        <Text style={{ marginLeft: '8px' }}>
+                                                                            {rating.toFixed(1)}/10
+                                                                        </Text>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        }
+                                                        avatar={
+                                                            <Avatar
+                                                                src={avatarUrl}
+                                                                icon={!avatarUrl ? <UserOutlined /> : undefined}
+                                                                style={{ backgroundColor: !avatarUrl ? '#1890ff' : undefined }}
+                                                            />
+                                                        }
+                                                        content={
+                                                            <div>
+                                                                <Paragraph
+                                                                    ellipsis={{
+                                                                        rows: 3,
+                                                                        expandable: true,
+                                                                        symbol: 'Read more'
+                                                                    }}
+                                                                >
+                                                                    {review.content}
+                                                                </Paragraph>
+                                                                {review.url && (
+                                                                    <a
+                                                                        href={review.url}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        style={{ fontSize: '12px' }}
+                                                                    >
+                                                                        View original review
+                                                                    </a>
+                                                                )}
+                                                            </div>
+                                                        }
+                                                        datetime={formatReviewDate(review.created_at)}
+                                                    />
+                                                </List.Item>
+                                            );
+                                        }}
+                                    />
+
+                                    {reviewsTotalPages > 1 && (
+                                        <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                                            <Pagination
+                                                current={reviewPage}
+                                                total={reviewsTotalPages * 10}
+                                                onChange={handleReviewPageChange}
+                                                showSizeChanger={false}
+                                            />
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                        </Card>
+                    </TabPane>
+
+                    <TabPane tab="Details" key="3">
                         <Card>
                             <Row gutter={[24, 24]}>
                                 {movie.production_companies && movie.production_companies.length > 0 && (

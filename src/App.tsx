@@ -1,29 +1,39 @@
-import React, {useEffect} from 'react';
+// src/App.tsx
+import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { Router } from './router';
-import {useAppDispatch, useAppSelector} from "./hooks";
-import {restoreSession} from "./store/slices/authSlice";
+import { useAppDispatch, useAppSelector } from "./hooks";
+import { restoreSession } from "./store/slices/authSlice";
+import './App.css';
 
-function App() {
+// AuthInitializer component to handle session restoration
+const AuthInitializer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const dispatch = useAppDispatch();
-    const sessionId = useAppSelector(state => state.auth.sessionId);
+    const {  isAuthenticated, loading } = useAppSelector(state => state.auth);
+
     useEffect(() => {
         const savedSession = localStorage.getItem('tmdbSession');
-        if (savedSession && !sessionId) {
+        if (savedSession && !isAuthenticated && !loading) {
             dispatch(restoreSession(savedSession));
         }
-    }, [dispatch, sessionId]);
+    }, [dispatch, isAuthenticated, loading]);
+
+    return <>{children}</>;
+};
+
+function App() {
     return (
-        <div style={{
-            height: '100vh',
-            width: '100%',
-            backgroundColor: '#f0f0f0' // Added for visibility
-        }}>
         <Provider store={store}>
-            <Router />
+            <AuthInitializer>
+                <div style={{
+                    height: '100vh',
+                    width: '100%'
+                }}>
+                    <Router />
+                </div>
+            </AuthInitializer>
         </Provider>
-            </div>
     );
 }
 

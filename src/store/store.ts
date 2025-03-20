@@ -1,16 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { moviesReducer } from './slices/movieSlice';
 import { searchReducer } from './slices/searchSlice';
-import { userListsReducer } from './slices/userListsSlice';
 import {authReducer} from "./slices/authSlice";
+import {listsReducer} from "./slices/listSlice";
 
 // Create store with proper type annotations
 export const store = configureStore({
     reducer: {
         movies: moviesReducer,
         search: searchReducer,
-        userLists: userListsReducer,
         auth: authReducer,
+        lists: listsReducer,
     },
 });
 

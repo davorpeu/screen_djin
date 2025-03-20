@@ -1,6 +1,6 @@
-// features/movieSearch/slice.ts
+
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { MovieAPI } from './api';
+
 import { MovieState } from '../shared/types';
 
 const initialState: MovieState = {
@@ -8,7 +8,7 @@ const initialState: MovieState = {
     loading: false,
     error: null,
     currentPage: 1,
-    totalPages: 1,
+    total_pages: 1,
     searchTerm: '',
 };
 
@@ -32,7 +32,7 @@ const movieSlice = createSlice({
             state.error = action.payload;
         },
         setTotalPages(state, action: PayloadAction<number>) {
-            state.totalPages = action.payload;
+            state.total_pages = action.payload;
         },
     },
 });

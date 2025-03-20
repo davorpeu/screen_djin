@@ -1,5 +1,6 @@
 export interface SessionState {
     sessionId: string | null;
+    user: any | null;
     requestToken: string | null;
     loading: boolean;
     error: string | null;

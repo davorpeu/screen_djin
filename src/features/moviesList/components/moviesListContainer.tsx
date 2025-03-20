@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../hooks';
-import { fetchPopularMovies, fetchTopRatedMovies } from '../../../store/slices/movieSlice';
-import { Layout, Card, Typography, Input, Empty, Row, Col, Pagination, Tabs, Button, Modal } from 'antd';
-import { searchMovies } from '../../../store/slices/searchSlice';
-import { MovieCard } from './MovieCard';
-import {  UnorderedListOutlined, FireOutlined,  } from '@ant-design/icons';
-import { PlusOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import React, {useEffect, useState} from 'react';
+import {useAppDispatch, useAppSelector} from '../../../hooks';
+import {fetchPopularMovies, fetchTopRatedMovies} from '../../../store/slices/movieSlice';
+import {Card, Col, Empty, Input, Layout, Modal, Pagination, Row, Tabs, Typography} from 'antd';
+import {searchMovies} from '../../../store/slices/searchSlice';
+import {MovieCard} from './MovieCard';
+import {FireOutlined, UnorderedListOutlined} from '@ant-design/icons';
+import {ListContainer} from '../../lists/components/ListContainer';
+import {fetchUserLists} from "../../../store/slices/listSlice";
+
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 const { Search } = Input;
@@ -19,13 +21,7 @@ interface Trailer {
     thumbnail: string;
     movieTitle: string;
 }
-interface MovieList {
-    id: string;
-    name: string;
-    description: string;
-    movies: number[];
-    created: string;
-}
+
 interface HomeProps {}
 
 export const MoviesListContainer: React.FC<HomeProps> = () => {
@@ -36,65 +32,59 @@ export const MoviesListContainer: React.FC<HomeProps> = () => {
     const [currentTrailer, setCurrentTrailer] = useState<Trailer | null>(null);
     const [trailerModalVisible, setTrailerModalVisible] = useState<boolean>(false);
     const pageSize = 9; // 3x3 grid
-    const [lists, setLists] = useState<MovieList[]>([
 
-    ]);
-    const [newListName, setNewListName] = useState<string>('');
-    const [newListDescription, setNewListDescription] = useState<string>('');
-    const [createListModalVisible, setCreateListModalVisible] = useState<boolean>(false);
     const searchResults = useAppSelector(state => state.search?.results || []);
     const isSearching = useAppSelector(state => state.search?.loading);
     const popularMovies = useAppSelector(state => state.movies?.popular?.results || []);
     const topRatedMovies = useAppSelector(state => state.movies?.topRated?.results || []);
-
-    const isLoggedin=false;
+    const { isAuthenticated } = useAppSelector(state => state.auth);
+    const searchTotalResults = useAppSelector(state => state.search?.total_pages|| 0);
+    const popularTotalResults = useAppSelector(state => state.movies.popular.total_pages || 0);
+    const topRatedTotalResults = useAppSelector(state => state.movies.topRated.total_pages|| 0);
+    // Handle tab changing through URL hash
+    useEffect(() => {
+        const hash = window.location.hash.replace('#', '');
+        if (hash === 'lists') {
+            setActiveTab('lists');
+        }
+    }, []);
+    const { user, sessionId } = useAppSelector(state => state.auth);
     // Effect hook for initial data fetching
     useEffect(() => {
-        dispatch(fetchPopularMovies());
-        dispatch(fetchTopRatedMovies());
-    }, [dispatch]);
+        dispatch(fetchPopularMovies(1));
+        dispatch(fetchTopRatedMovies(1));
+        console.log(user, sessionId);
+        if (user && sessionId) {
+
+            dispatch(fetchUserLists({ accountId: user.id, sessionId }));
+        }
+    }, [dispatch, user, sessionId]);
 
     // Event handler with proper typing
     const handleSearch = (value: string): void => {
         setSearchTerm(value);
         setCurrentPage(1); // Reset to first page on new search
         if (value.trim()) {
-            dispatch(searchMovies(value));
-        }
-    };
-    const showCreateListModal = () => {
-        setCreateListModalVisible(true);
-    };
-
-    const handleCreateList = () => {
-        if (newListName.trim()) {
-            const newList: MovieList = {
-                id: Date.now().toString(),
-                name: newListName,
-                description: newListDescription,
-                movies: [],
-                created: new Date().toISOString().split('T')[0]
-            };
-            setLists([...lists, newList]);
-            setNewListName('');
-            setNewListDescription('');
-            setCreateListModalVisible(false);
+            dispatch(searchMovies({ query: value, page: 1 }));
         }
     };
 
-    const handleDeleteList = (listId: string) => {
-        setLists(lists.filter(list => list.id !== listId));
-    };
     const handlePageChange = (page: number): void => {
         setCurrentPage(page);
-        window.scrollTo(0, 0); // Scroll to top when page changes
+        window.scrollTo(0, 0);
+
+        if (searchTerm) {
+            dispatch(searchMovies({ query: searchTerm, page }));
+        } else {
+            dispatch(fetchPopularMovies(page));
+        }
     };
 
     const handleTabChange = (activeKey: string): void => {
         setActiveTab(activeKey);
         setCurrentPage(1); // Reset pagination on tab change
+        window.location.hash = activeKey === 'lists' ? 'lists' : '';
     };
-
 
     const closeTrailer = (): void => {
         setTrailerModalVisible(false);
@@ -113,20 +103,17 @@ export const MoviesListContainer: React.FC<HomeProps> = () => {
     // Get current data based on search or category
     const getCurrentData = () => {
         if (searchTerm && Array.isArray(searchResults)) {
-            return getPaginatedData(searchResults);
+            return searchResults;
         }
-        // Default to popular movies when not searching
-        return getPaginatedData(popularMovies);
+        return popularMovies;
     };
 
-    const getTotalCount = () => {
-        if (searchTerm && Array.isArray(searchResults)) {
-            return searchResults.length;
+   /* const getTotalCount = (state) => {
+        if (searchTerm) {
+            return searchTotalResults;
         }
-        return Array.isArray(popularMovies) ? popularMovies.length : 0;
-    };
-
-
+        return popularTotalResults;
+    };*/
 
     return (
         <Layout>
@@ -168,30 +155,25 @@ export const MoviesListContainer: React.FC<HomeProps> = () => {
                             marginTop: '16px',
                             color: 'white'
                         }}
-                    ><TabPane
-
-                        tab={
-                            <span style={{ color: 'white', fontSize: '16px' }}>
+                    >
+                        <TabPane
+                            tab={
+                                <span style={{ color: 'white', fontSize: '16px' }}>
                                     <FireOutlined /> Discover
                                 </span>
-                        }
-
-                        key="discover"
-                    />
-                        <>
-                            {isLoggedin ? (
+                            }
+                            key="discover"
+                        />
+                        {isAuthenticated && (
                             <TabPane
                                 tab={
                                     <span style={{ color: 'white', fontSize: '16px' }}>
-                                    <UnorderedListOutlined /> My Lists
-                                </span>
+                                        <UnorderedListOutlined /> My Lists
+                                    </span>
                                 }
                                 key="lists"
-                            />  ) : null}
-
-                        </>
-
-
+                            />
+                        )}
                     </Tabs>
                 </div>
             </Header>
@@ -220,7 +202,7 @@ export const MoviesListContainer: React.FC<HomeProps> = () => {
                                                 <Pagination
                                                     current={currentPage}
                                                     pageSize={pageSize}
-                                                    total={getTotalCount()}
+                                                    total={searchTotalResults}
                                                     onChange={handlePageChange}
                                                     showSizeChanger={false}
                                                 />
@@ -252,7 +234,7 @@ export const MoviesListContainer: React.FC<HomeProps> = () => {
                                                 <Pagination
                                                     current={currentPage}
                                                     pageSize={pageSize}
-                                                    total={getTotalCount()}
+                                                    total={popularTotalResults}
                                                     onChange={handlePageChange}
                                                     showSizeChanger={false}
                                                 />
@@ -280,7 +262,7 @@ export const MoviesListContainer: React.FC<HomeProps> = () => {
                                                 <Pagination
                                                     current={currentPage}
                                                     pageSize={pageSize}
-                                                    total={Array.isArray(topRatedMovies) ? topRatedMovies.length : 0}
+                                                    total={topRatedTotalResults}
                                                     onChange={handlePageChange}
                                                     showSizeChanger={false}
                                                 />
@@ -295,83 +277,9 @@ export const MoviesListContainer: React.FC<HomeProps> = () => {
                     </>
                 )}
 
-
-
                 {/* Lists Tab Content */}
-                {activeTab === 'lists' && (
-                    <div>
-                        <Card style={{ marginBottom: '24px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                <Title level={3} style={{ margin: 0 }}>My Movie Lists</Title>
-                                <Button type="primary" icon={<PlusOutlined />} onClick={showCreateListModal}>
-                                    Create List
-                                </Button>
-                            </div>
-
-                            {lists.length > 0 ? (
-                                <Row gutter={[24, 24]}>
-                                    {lists.map(list => (
-                                        <Col xs={24} sm={12} md={8} key={list.id}>
-                                            <Card
-                                                hoverable
-                                                actions={[
-                                                    <EditOutlined key="edit"  onClick={() => handleDeleteList(list.id)}/>,
-                                                    <DeleteOutlined key="delete" onClick={() => handleDeleteList(list.id)} />
-                                                ]}
-                                            >
-                                                <Card.Meta
-                                                    title={list.name}
-                                                    description={
-                                                        <>
-                                                            <p>{list.description}</p>
-                                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                                <Text type="secondary">{list.movies.length} movies</Text>
-                                                                <Text type="secondary">Created: {list.created}</Text>
-                                                            </div>
-                                                        </>
-                                                    }
-                                                />
-                                            </Card>
-                                        </Col>
-                                    ))}
-                                </Row>
-                            ) : (
-                                <Empty
-                                    description="You haven't created any lists yet"
-                                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                >
-                                    <Button type="primary" onClick={showCreateListModal}>Create Your First List</Button>
-                                </Empty>
-                            )}
-                        </Card>
-
-                        {/* Create List Modal */}
-                        <Modal
-                            title="Create New List"
-                            open={createListModalVisible}
-                            onOk={handleCreateList}
-                            onCancel={() => setCreateListModalVisible(false)}
-                            okButtonProps={{ disabled: !newListName.trim() }}
-                        >
-                            <div style={{ marginBottom: '16px' }}>
-                                <Input
-                                    placeholder="List Name"
-                                    value={newListName}
-                                    onChange={e => setNewListName(e.target.value)}
-                                    maxLength={50}
-                                />
-                            </div>
-                            <div>
-                                <Input.TextArea
-                                    placeholder="Description (optional)"
-                                    value={newListDescription}
-                                    onChange={e => setNewListDescription(e.target.value)}
-                                    maxLength={200}
-                                    rows={4}
-                                />
-                            </div>
-                        </Modal>
-                    </div>
+                {activeTab === 'lists' && isAuthenticated && (
+                    <ListContainer />
                 )}
 
                 {/* Trailer Modal */}
