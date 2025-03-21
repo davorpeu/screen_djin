@@ -7,7 +7,7 @@ import {LoadingPage} from '@/components/ui/LoadingPage';
 
 const HomePage = lazy(() => import('@/features/movies').then(mod => ({ default: mod.MoviesListContainer })));
 const MovieDetailsPage = lazy(() => import('@/features/movieDetails').then(mod => ({ default: mod.MovieDetails })));
-const ListDetailsPage = lazy(() => import('@/features/lists').then(mod => ({ default: mod.ListDetail })));
+const ListDetailsPage = lazy(() => import('@/features/lists').then(mod => ({ default: mod.ListDetailContainer })));
 
 const NotFoundPage = () => (
     <div style={{ textAlign: 'center', padding: '50px 0' }}>
@@ -22,7 +22,16 @@ export const AppRoutes = () => {
             <Routes>
                 {/* Public routes */}
                 <Route path="/login" element={<LoginPage />} />
-
+                <Route path="/list/:id" element={
+                    <AppLayout>
+                        <ListDetailsPage />
+                    </AppLayout>
+                } />
+                <Route path="/movie/:id" element={
+                    <AppLayout>
+                        <MovieDetailsPage />
+                    </AppLayout>
+                } />
                 {/* Protected routes */}
                 <Route element={<ProtectedRoute />}>
                     <Route path="/" element={
@@ -31,17 +40,6 @@ export const AppRoutes = () => {
                         </AppLayout>
                     } />
 
-                    <Route path="/movie/:id" element={
-                        <AppLayout>
-                            <MovieDetailsPage />
-                        </AppLayout>
-                    } />
-
-                    <Route path="/list/:id" element={
-                        <AppLayout>
-                            <ListDetailsPage />
-                        </AppLayout>
-                    } />
                 </Route>
 
                 {/* Catch-all route for 404s */}
