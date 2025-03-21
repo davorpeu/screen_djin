@@ -1,9 +1,9 @@
 {
   "name": "screen_djin",
+  "homepage": "https://davorpeu.github.io/screen_djin",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://davorpeu.github.io/screen_djin",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

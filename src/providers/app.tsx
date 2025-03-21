@@ -10,7 +10,7 @@ type AppProviderProps = {
 export const AppProvider = ({ children }: AppProviderProps) => {
     return (
         <ReduxProvider store={store}>
-            <Router>
+            <Router basename="/screen_djin">
                 {children}
             </Router>
         </ReduxProvider>
