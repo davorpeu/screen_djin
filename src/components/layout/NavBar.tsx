@@ -1,20 +1,17 @@
-// src/components/layout/Navbar.tsx
 import React from 'react';
 import {Button, Layout} from 'antd';
 import {Link, useNavigate} from 'react-router-dom';
 import {LogoutOutlined} from '@ant-design/icons';
-import {useAppDispatch, useAppSelector} from '../../hooks';
-import {logout} from '../../store/slices/authSlice';
+import {useAuth} from '@/features/auth';
 
 const { Header } = Layout;
 
 export const Navbar: React.FC = () => {
-    const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const { isAuthenticated } = useAppSelector(state => state.auth);
+    const { isAuthenticated, logout } = useAuth();
 
     const handleLogout = () => {
-        dispatch(logout()).then(() => {
+        logout().then(() => {
             navigate('/login');
         });
     };
@@ -37,8 +34,6 @@ export const Navbar: React.FC = () => {
 
             {isAuthenticated ? (
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-
-
                     <Button
                         type="link"
                         icon={<LogoutOutlined />}

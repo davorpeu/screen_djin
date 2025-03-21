@@ -1,6 +1,7 @@
+/*
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { tmdbApi } from '../../services/api/tmdb';
-import { Movie, SearchResults } from '../../types/movie.types';
+import { Movie, SearchResults } from '../../types/movie';
 
 interface SearchState {
     results: Movie[];
@@ -61,4 +62,4 @@ const searchSlice = createSlice({
 });
 
 export const { clearSearch } = searchSlice.actions;
-export const searchReducer = searchSlice.reducer;
+export const searchReducer = searchSlice.reducer;*/

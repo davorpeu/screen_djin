@@ -1,7 +1,6 @@
-// Create a new file at src/components/layout/AppLayout.tsx
 import React from 'react';
-import { Layout } from 'antd';
-import { Navbar } from './NavBar';
+import {Layout} from 'antd';
+import {Navbar} from './Navbar';
 
 const { Content } = Layout;
 

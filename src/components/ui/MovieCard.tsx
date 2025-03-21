@@ -1,10 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Card, Rate } from 'antd';
-import { Movie } from '../../../types/movie.types';
+import {Link} from 'react-router-dom';
+import {Card, Rate} from 'antd';
+import {Movie} from '@/types/movie';
+import {IMAGE_BASE_URL, POSTER_SIZES} from '@/config';
 
 interface MovieCardProps {
-    movie?: Movie;  // Make it optional
+    movie?: Movie;
 }
 
 export const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
@@ -14,17 +15,20 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
         );
     }
 
+    const posterUrl = movie.poster_path
+        ? `${IMAGE_BASE_URL}/${POSTER_SIZES.medium}${movie.poster_path}`
+        : 'https://critics.io/img/movies/poster-placeholder.png';
+
     return (
+        <Link to={`/movie/${movie.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+
         <Card
             hoverable
             style={{ height: '100%' }}
             cover={
                 <img
                     alt={movie.title}
-                    src={movie.poster_path
-                        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                        : 'https://critics.io/img/movies/poster-placeholder.png'
-                    }
+                    src={posterUrl}
                     style={{
                         height: '300px',
                         objectFit: 'cover',
@@ -36,7 +40,6 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
                 />
             }
         >
-            <Link to={`/movie/${movie.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
                 <Card.Meta
                     title={movie.title}
                     description={
@@ -46,7 +49,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
                                     <span>{new Date(movie.release_date).getFullYear()}</span>
                                 )}
                             </div>
-                            {movie.vote_average && (
+                            {movie.vote_average > 0 && (
                                 <Rate
                                     disabled
                                     allowHalf
@@ -57,7 +60,8 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
                         </>
                     }
                 />
-            </Link>
         </Card>
+        </Link>
+
     );
 };

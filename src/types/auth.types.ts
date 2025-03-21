@@ -1,3 +1,4 @@
+/*
 export interface SessionState {
     sessionId: string | null;
     user: any | null;
@@ -9,4 +10,4 @@ export interface SessionState {
 export interface AuthRequest {
     username: string;
     password: string;
-}
+}*/

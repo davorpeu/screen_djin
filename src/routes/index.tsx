@@ -1,14 +1,14 @@
-// src/routes/index.tsx
-import React from 'react';
-import { Route, Routes } from 'react-router-dom';
-import { MoviesListContainer } from '../features/moviesList/components/moviesListContainer';
-import { MovieDetails } from "../features/movie/components/MovieDetails";
-import { ListDetail } from "../features/lists/components/ListDetail";
-import { LoginPage } from '../features/auth/components/LoginPage';
-import { ProtectedRoute } from './ProtectedRoute';
-import { AppLayout } from '../components/layout/AppLayout';
+import React, {lazy, Suspense} from 'react';
+import {Route, Routes} from 'react-router-dom';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {LoginPage} from '@/features/auth';
+import {ProtectedRoute} from './ProtectedRoute';
+import {LoadingPage} from '@/components/ui/LoadingPage';
 
-// Create a simple NotFoundPage component
+const HomePage = lazy(() => import('@/features/movies').then(mod => ({ default: mod.MoviesListContainer })));
+const MovieDetailsPage = lazy(() => import('@/features/movieDetails').then(mod => ({ default: mod.MovieDetails })));
+const ListDetailsPage = lazy(() => import('@/features/lists').then(mod => ({ default: mod.ListDetail })));
+
 const NotFoundPage = () => (
     <div style={{ textAlign: 'center', padding: '50px 0' }}>
         <h2>404 - Page Not Found</h2>
@@ -18,38 +18,35 @@ const NotFoundPage = () => (
 
 export const AppRoutes = () => {
     return (
-        <Routes>
-            {/* Public route */}
-            <Route path="/login" element={<LoginPage />} />
+        <Suspense fallback={<LoadingPage />}>
+            <Routes>
+                {/* Public routes */}
+                <Route path="/login" element={<LoginPage />} />
 
-            {/* Protected routes wrapped with AppLayout */}
-            <Route path="/" element={
-                <ProtectedRoute>
-                    <AppLayout>
-                        <MoviesListContainer />
-                    </AppLayout>
-                </ProtectedRoute>
-            } />
+                {/* Protected routes */}
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/" element={
+                        <AppLayout>
+                            <HomePage />
+                        </AppLayout>
+                    } />
 
-            <Route path="/movie/:id" element={
-                <ProtectedRoute>
-                    <AppLayout>
-                        <MovieDetails />
-                    </AppLayout>
-                </ProtectedRoute>
-            } />
+                    <Route path="/movie/:id" element={
+                        <AppLayout>
+                            <MovieDetailsPage />
+                        </AppLayout>
+                    } />
 
-            {/* List routes */}
-            <Route path="/list/:id" element={
-                <ProtectedRoute>
-                    <AppLayout>
-                        <ListDetail />
-                    </AppLayout>
-                </ProtectedRoute>
-            } />
+                    <Route path="/list/:id" element={
+                        <AppLayout>
+                            <ListDetailsPage />
+                        </AppLayout>
+                    } />
+                </Route>
 
-            {/* 404 route */}
-            <Route path="*" element={<NotFoundPage />} />
-        </Routes>
+                {/* Catch-all route for 404s */}
+                <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+        </Suspense>
     );
 };

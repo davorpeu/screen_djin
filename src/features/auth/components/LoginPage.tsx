@@ -1,46 +1,30 @@
-import React, {  useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Form, Input, Button, Card, Typography, Alert, Layout } from 'antd';
-import { UserOutlined, LockOutlined, LoginOutlined } from '@ant-design/icons';
-import { useAppDispatch, useAppSelector } from '../../../hooks';
-import { login, clearAuthError } from '../../../store/slices/authSlice';
+import React, {useEffect} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {Card, Layout, Typography} from 'antd';
+import {LoginForm} from './LoginForm';
+import {useAuth} from '@/features/auth';
 
 const { Title, Text } = Typography;
 const { Content } = Layout;
 
-interface LoginFormValues {
-    username: string;
-    password: string;
-}
-
 export const LoginPage: React.FC = () => {
-    const [form] = Form.useForm();
-    const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const location = useLocation();
+    const { login, loading, error, isAuthenticated, clearError } = useAuth();
 
-    // Get from location state if available, otherwise default to '/'
     const from = (location.state as { from?: string })?.from || '/';
 
-    const { loading, error, isAuthenticated } = useAppSelector(state => state.auth);
-
-    // Effect to redirect if already authenticated
     useEffect(() => {
         if (isAuthenticated) {
             navigate(from, { replace: true });
         }
     }, [isAuthenticated, navigate, from]);
 
-    // Clear error when component unmounts
     useEffect(() => {
         return () => {
-            dispatch(clearAuthError());
+            clearError();
         };
-    }, [dispatch]);
-
-    const onFinish = (values: LoginFormValues) => {
-        dispatch(login(values));
-    };
+    }, [clearError]);
 
     return (
         <Layout>
@@ -61,67 +45,20 @@ export const LoginPage: React.FC = () => {
                             <Text type="secondary">Sign in to your TMDB account</Text>
                         </div>
 
-                        {error && (
-                            <Alert
-                                message="Login Failed"
-                                description={error}
-                                type="error"
-                                showIcon
-                                style={{ marginBottom: '24px' }}
-                            />
-                        )}
+                        <LoginForm
+                            onSubmit={login}
+                            loading={loading}
+                            error={error}
+                        />
 
-                        <Form
-                            name="login"
-                            form={form}
-                            layout="vertical"
-                            onFinish={onFinish}
-                            autoComplete="off"
-                        >
-                            <Form.Item
-                                name="username"
-                                rules={[{ required: true, message: 'Please input your username!' }]}
-                            >
-                                <Input
-                                    prefix={<UserOutlined />}
-                                    placeholder="TMDB Username"
-                                    size="large"
-                                />
-                            </Form.Item>
-
-                            <Form.Item
-                                name="password"
-                                rules={[{ required: true, message: 'Please input your password!' }]}
-                            >
-                                <Input.Password
-                                    prefix={<LockOutlined />}
-                                    placeholder="Password"
-                                    size="large"
-                                />
-                            </Form.Item>
-
-                            <Form.Item>
-                                <Button
-                                    type="primary"
-                                    htmlType="submit"
-                                    icon={<LoginOutlined />}
-                                    loading={loading}
-                                    size="large"
-                                    block
-                                >
-                                    Sign In
-                                </Button>
-                            </Form.Item>
-
-                            <div style={{ textAlign: 'center' }}>
-                                <Text type="secondary">
-                                    Don't have a TMDB account?{' '}
-                                    <a href="https://www.themoviedb.org/signup" target="_blank" rel="noopener noreferrer">
-                                        Create an account
-                                    </a>
-                                </Text>
-                            </div>
-                        </Form>
+                        <div style={{ textAlign: 'center' }}>
+                            <Text type="secondary">
+                                Don't have a TMDB account?{' '}
+                                <a href="https://www.themoviedb.org/signup" target="_blank" rel="noopener noreferrer">
+                                    Create an account
+                                </a>
+                            </Text>
+                        </div>
                     </Card>
                 </div>
             </Content>

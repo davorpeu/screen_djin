@@ -1,18 +1,12 @@
-// src/routes/ProtectedRoute.tsx
 import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { Spin } from 'antd';
-import { useAppSelector } from '../hooks';
+import {Navigate, Outlet, useLocation} from 'react-router-dom';
+import {Spin} from 'antd';
+import {useAuth} from '@/features/auth';
 
-interface ProtectedRouteProps {
-    children: React.ReactNode;
-}
-
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-    const { isAuthenticated, loading } = useAppSelector(state => state.auth);
+export const ProtectedRoute: React.FC = () => {
+    const { isAuthenticated, loading } = useAuth();
     const location = useLocation();
 
-    // Show loading spinner while checking authentication
     if (loading) {
         return (
             <div style={{
@@ -26,12 +20,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         );
     }
 
-    // Redirect to login if not authenticated
     if (!isAuthenticated) {
-        // Save the current location to redirect back after login
         return <Navigate to="/login" state={{ from: location.pathname }} replace />;
     }
 
-    // Render children if authenticated - we'll handle layout in the routes file
-    return <>{children}</>;
+    return <Outlet />;
 };

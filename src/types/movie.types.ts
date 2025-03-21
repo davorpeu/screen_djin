@@ -1,3 +1,4 @@
+/*
 export interface Movie {
     id: number;
     title: string;
@@ -15,6 +16,8 @@ export interface Movie {
 export interface MovieDetails extends Movie {
     genres: Genre[];
     runtime: number;
+    budget: number;
+    revenue: number;
     status: string;
     tagline: string;
     videos: {
@@ -109,4 +112,4 @@ export interface MovieList {
     description: string;
     items: (Movie | TvShow)[];
     createdAt: string;
-}
+}*/

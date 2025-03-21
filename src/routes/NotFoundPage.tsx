@@ -1,7 +1,6 @@
-// src/routes/NotFoundPage.tsx
 import React from 'react';
-import { Result, Button } from 'antd';
-import { Link } from 'react-router-dom';
+import {Button, Result} from 'antd';
+import {Link} from 'react-router-dom';
 
 export const NotFoundPage: React.FC = () => {
     return (
