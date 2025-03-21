@@ -4,7 +4,7 @@ import {AppRoutes} from '@/routes';
 
 export const Router: React.FC = () => {
     return (
-        <BrowserRouter>
+        <BrowserRouter basename="/screen_djin">
             <AppRoutes />
         </BrowserRouter>
     );
