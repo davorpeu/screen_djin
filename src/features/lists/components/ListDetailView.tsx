@@ -9,18 +9,15 @@ const { Content } = Layout;
 const { Title, Text } = Typography;
 
 interface ListDetailViewProps {
-    // Data props
     list: MovieList | null;
     loading: boolean;
     error: string | null;
     isAuthenticated: boolean;
     shareUrl: string;
 
-    // State props
     shareModalVisible: boolean;
     copied: boolean;
 
-    // Event handlers
     onShowShareModal: () => void;
     onHideShareModal: () => void;
     onCopyToClipboard: () => void;

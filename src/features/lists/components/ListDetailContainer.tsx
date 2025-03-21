@@ -10,11 +10,9 @@ export const ListDetailContainer: React.FC = () => {
     const { currentList, getListDetails } = useLists();
     const { isAuthenticated } = useAuth();
 
-    // State for share modal
     const [shareModalVisible, setShareModalVisible] = useState(false);
     const [copied, setCopied] = useState(false);
 
-    // Get the current URL for sharing
     const shareUrl = window.location.href;
 
     useEffect(() => {
@@ -23,7 +21,6 @@ export const ListDetailContainer: React.FC = () => {
         }
     }, [id, getListDetails]);
 
-    // Function to copy URL to clipboard
     const copyToClipboard = () => {
         navigator.clipboard.writeText(shareUrl)
             .then(() => {
@@ -37,12 +34,10 @@ export const ListDetailContainer: React.FC = () => {
             });
     };
 
-    // Show the share modal
     const showShareModal = () => {
         setShareModalVisible(true);
     };
 
-    // Hide the share modal
     const hideShareModal = () => {
         setShareModalVisible(false);
         setCopied(false);
