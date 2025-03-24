@@ -201,7 +201,6 @@ export const ListsView: React.FC<ListsViewProps> = ({
                 </Form>
             </Modal>
 
-            {/* Enhanced Edit List Modal with Movie Management */}
             <ListEditModal
                 visible={editModalVisible}
                 list={currentEditingList}
