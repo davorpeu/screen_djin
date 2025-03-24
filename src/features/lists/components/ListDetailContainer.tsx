@@ -26,7 +26,6 @@ export const ListDetailContainer: React.FC = () => {
             .then(() => {
                 setCopied(true);
                 message.success('URL copied to clipboard!');
-                // Reset the copied state after a short delay
                 setTimeout(() => setCopied(false), 2000);
             })
             .catch(() => {

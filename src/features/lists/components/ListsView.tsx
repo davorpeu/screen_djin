@@ -134,7 +134,6 @@ export const ListsView: React.FC<ListsViewProps> = ({
                                                 }}>{list.description}</p>
                                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                                     <Text type="secondary">{list.item_count} movies</Text>
-                                                    <Text type="secondary">{list.favorite_count} likes</Text>
                                                 </div>
                                             </>
                                         }
