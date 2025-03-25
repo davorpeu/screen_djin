@@ -3,6 +3,7 @@ import {Form, message} from 'antd';
 import {useLists} from '@/features/lists';
 import {ListsView} from './ListsView';
 import {CreateListRequest, List, MovieList, UpdateListRequest} from '../types';
+import {toast} from "react-toastify";
 
 
 export const ListsContainer: React.FC = () => {
@@ -26,7 +27,6 @@ export const ListsContainer: React.FC = () => {
     const [createModalVisible, setCreateModalVisible] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [currentEditingList, setCurrentEditingList] = useState<MovieList | null>(null);
-
     useEffect(() => {
         getUserLists();
 
@@ -73,6 +73,7 @@ export const ListsContainer: React.FC = () => {
             language: 'en'
         });
         setCreateModalVisible(false);
+        toast.success("Bam! Movie List Added");
     };
 
     const handleShowEditModal = async (list: List) => {
@@ -102,16 +103,20 @@ export const ListsContainer: React.FC = () => {
 
     const handleDeleteList = (listId: number) => {
         deleteList(listId);
-
+        toast.success("Bam! Movie List Removed");
 
     };
 
     const handleAddMovieToList = (listId: number, movieId: number) => {
         addMovieToList(listId, movieId);
+        toast.success("Bam! Movie added");
+
     };
 
     const handleRemoveMovieFromList = (listId: number, movieId: number) => {
         removeMovieFromList(listId, movieId);
+        toast.success("Bam! Movie removed");
+
     };
 
     return (

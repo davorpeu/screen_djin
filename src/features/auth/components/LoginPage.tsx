@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {useAuth} from '@/features/auth';
 import {LoginPageView} from "@/features/auth/components/LoginPageView";
+import {toast} from "react-toastify";
 
 
 
@@ -15,6 +16,7 @@ export const LoginPage: React.FC = () => {
     useEffect(() => {
         if (isAuthenticated) {
             navigate(from, { replace: true });
+            toast.success("Welcome to Screen Djin")
         }
     }, [isAuthenticated, navigate, from]);
 

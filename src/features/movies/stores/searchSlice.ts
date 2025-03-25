@@ -1,6 +1,7 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {moviesApi} from '../api/moviesApi';
 import {SearchState} from '@/types/movie';
+import {toast} from "react-toastify";
 
 const initialState: SearchState = {
     results: [],
@@ -16,10 +17,12 @@ export const searchMovies = createAsyncThunk(
         try {
             const response = await moviesApi.searchMovies(query, page);
             if (response.error) {
+                toast.error(response.error)
                 return rejectWithValue(response.error);
             }
             return response.data;
         } catch (error: any) {
+            toast.error(error.message)
             return rejectWithValue(error.message || 'Failed to search movies');
         }
     }

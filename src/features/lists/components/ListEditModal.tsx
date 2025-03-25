@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import { message} from 'antd';
 import { useMovies} from '@/features/movies';
 import {List as MovieList, UpdateListRequest} from '../types';
 import {ListEditModalView} from "@/features/lists/components/ListEditModalView";
 
 interface ListEditModalProps {
     visible: boolean;
-    list: MovieList | null;
+    list: MovieList | [];
     form: any;
     loading: boolean;
     onClose: () => void;
@@ -26,6 +25,7 @@ export const ListEditModal: React.FC<ListEditModalProps> = ({
     const [searchTerm, setSearchTerm] = useState('');
     const { search, searchForMovies, clearSearchResults } = useMovies();
     const [searchLoading, setSearchLoading] = useState(false);
+
 
     useEffect(() => {
         if (!visible) {
@@ -49,14 +49,13 @@ export const ListEditModal: React.FC<ListEditModalProps> = ({
     const handleAddMovie = (movieId: number) => {
         if (list) {
             onAddMovie(list.id, movieId);
-            message.success(`Movie added to "${list.name}"`);
+
         }
     };
 
     const handleRemoveMovie = (movieId: number) => {
         if (list) {
             onRemoveMovie(list.id, movieId);
-            message.success(`Movie removed from "${list.name}"`);
         }
     };
 

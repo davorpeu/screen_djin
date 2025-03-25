@@ -3,6 +3,7 @@ import { Button, Layout, Space } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogoutOutlined } from '@ant-design/icons';
 import { useAuth } from '@/features/auth';
+import { ToastContainer} from "react-toastify";
 
 const { Header } = Layout;
 
@@ -58,7 +59,11 @@ export const Navbar: React.FC = () => {
                         Login
                     </Button>
                 )}
+                <ToastContainer />
+
             </Space>
+
         </Header>
+
     );
 };
